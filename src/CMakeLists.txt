@@ -2,6 +2,7 @@ cmake_minimum_required (VERSION 3.18)
 
 # Set the project name
 set(APP_NAME CubeSat)
+set(CXX_STANDARD 20)
 
 project (${APP_NAME})
 

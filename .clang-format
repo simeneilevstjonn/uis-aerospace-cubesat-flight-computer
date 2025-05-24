@@ -1,0 +1,12 @@
+BasedOnStyle: Microsoft
+SpaceBeforeParens: ControlStatements
+IncludeBlocks: Preserve
+SortIncludes: Never
+SpaceBeforeCpp11BracedList: true
+Cpp11BracedListStyle: false
+PointerAlignment: Left
+AlignConsecutiveBitFields: AcrossEmptyLines
+AllowShortBlocksOnASingleLine: Empty
+AllowShortLoopsOnASingleLine: True
+InsertBraces: true
+ColumnLimit: 180
