@@ -20,7 +20,7 @@ int main()
         {
             auto sample = gyro_fifo.front();
             gyro_fifo.pop();
-            std::cout << "Gyro sample " << sample.x << " " << sample.y << " " << sample.z << std::endl;
+            std::cout << "Gyro sample " << sample.x << " " << sample.y << " " << sample.z << "\n";
         }
 
         auto& acc_fifo = acc.get_fifo();
@@ -28,9 +28,9 @@ int main()
         {
             auto sample = acc_fifo.front();
             acc_fifo.pop();
-            std::cout << "Acceleration sample " << sample.x << " " << sample.y << " " << sample.z << std::endl;
+            std::cout << "Acceleration sample " << sample.x << " " << sample.y << " " << sample.z << "\n";
         }
 
-        platform_delay(10);
+        // platform_delay(10);
     }
 }
