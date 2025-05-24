@@ -31,6 +31,6 @@ int main()
             std::cout << "Acceleration sample " << sample.x << " " << sample.y << " " << sample.z << std::endl;
         }
 
-        platform_delay(50);
+        platform_delay(10);
     }
 }
