@@ -55,7 +55,7 @@ int32_t platform_write(void* handle, uint8_t reg, const uint8_t* bufp, uint16_t 
     data[0] = reg;
     memcpy(data + 1, bufp, len);
 
-    if (auto res = write(m_adapter_file, data, sizeof(data)); res != sizeof(data))
+    if (auto res = write(m_adapter_file, data, len + sizeof(reg)); res != len + sizeof(reg))
     {
         // delete data;
         free(data);
