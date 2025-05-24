@@ -8,6 +8,7 @@
 #include <cstring>
 
 int m_adapter_file;
+int m_last_used_reg = -1;
 
 int32_t i2c_init()
 {
@@ -23,7 +24,16 @@ int32_t i2c_init()
 
 int32_t slave_set(uint8_t address)
 {
-    return ioctl(m_adapter_file, I2C_SLAVE, address);
+    if (m_last_used_reg != address)
+    {
+        if (auto res = ioctl(m_adapter_file, I2C_SLAVE, address); res)
+        {
+            return res;
+        }
+    }
+
+    m_last_used_reg = address;
+    return 0;
 }
 
 /** Please note that is MANDATORY: return 0 -> no Error.**/

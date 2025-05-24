@@ -140,6 +140,82 @@ void a3g4250d_read_data_polling(void)
     }
 }
 
+void a3g4250d_fifo_read(void)
+{
+    static int16_t data_raw_angular_rate[3];
+    static float_t angular_rate_mdps[3];
+    static uint8_t whoamI;
+    uint8_t addr = 0x68;
+    stmdev_ctx_t dev_ctx;
+    /* Uncomment to use interrupts on drdy */
+    // a3g4250d_int2_route_t int2_reg;
+    /* Initialize mems driver interface */
+    dev_ctx.write_reg = platform_write;
+    dev_ctx.read_reg = platform_read;
+    dev_ctx.mdelay = platform_delay;
+    dev_ctx.handle = &addr;
+    /* Initialize platform specific hardware */
+    /* Wait sensor boot time */
+    platform_delay(BOOT_TIME);
+    /* Check device ID */
+    a3g4250d_device_id_get(&dev_ctx, &whoamI);
+
+    if (whoamI != A3G4250D_ID)
+    {
+        while (1); /*manage here device not found */
+    }
+
+    /* Set FIFO watermark to 10 samples */
+    a3g4250d_fifo_watermark_set(&dev_ctx, 10);
+    /* Set FIFO mode to FIFO MODE */
+    a3g4250d_fifo_mode_set(&dev_ctx, A3G4250D_FIFO_STREAM_MODE);
+    /* Enable FIFO */
+    a3g4250d_fifo_enable_set(&dev_ctx, PROPERTY_ENABLE);
+    /* Uncomment to configure watermark interrupt on INT2 */
+    // a3g4250d_pin_int2_route_get(&dev_ctx, &int2_route);
+    // int2_route.i2_wtm = PROPERTY_ENABLE;
+    // a3g4250d_pin_int2_route_set(&dev_ctx, int2_route);
+    /* Set Output Data Rate */
+    a3g4250d_data_rate_set(&dev_ctx, A3G4250D_ODR_100Hz);
+
+    /* Wait Events Loop */
+    int nodata = 0;
+    while (1)
+    {
+        uint8_t flags;
+        uint8_t num = 0;
+        /* Read watermark interrupt flag */
+        a3g4250d_fifo_wtm_flag_get(&dev_ctx, &flags);
+
+        if (flags)
+        {
+            /* Read how many samples in fifo */
+            a3g4250d_fifo_data_level_get(&dev_ctx, &num);
+
+            while (num-- > 0)
+            {
+                /* Read angular rate data */
+                memset(data_raw_angular_rate, 0x00, 3 * sizeof(int16_t));
+                a3g4250d_angular_rate_raw_get(&dev_ctx, data_raw_angular_rate);
+                angular_rate_mdps[0] = a3g4250d_from_fs245dps_to_mdps(data_raw_angular_rate[0]);
+                angular_rate_mdps[1] = a3g4250d_from_fs245dps_to_mdps(data_raw_angular_rate[1]);
+                angular_rate_mdps[2] = a3g4250d_from_fs245dps_to_mdps(data_raw_angular_rate[2]);
+                printf("Angular Rate [mdps]:%4.2f\t%4.2f\t%4.2f\r\n", angular_rate_mdps[0], angular_rate_mdps[1], angular_rate_mdps[2]);
+            }
+
+            nodata = 0;
+        }
+        else
+        {
+            nodata++;
+            if (nodata % 1000 == 0)
+            {
+                printf("No data! %d\n", nodata);
+            }
+        }
+    }
+}
+
 int main()
 {
     if (auto res = i2c_init(); res)
@@ -147,5 +223,5 @@ int main()
         return res;
     }
 
-    a3g4250d_read_data_polling();
+    a3g4250d_fifo_read();
 }
