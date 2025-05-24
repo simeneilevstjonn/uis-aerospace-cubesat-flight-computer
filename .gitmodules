@@ -1,0 +1,9 @@
+[submodule "src/external/lis2dw12-pid"]
+	path = src/external/lis2dw12-pid
+	url = git@github.com:STMicroelectronics/lis2dw12-pid.git
+[submodule "src/external/lps22hb-pid"]
+	path = src/external/lps22hb-pid
+	url = git@github.com:STMicroelectronics/lps22hb-pid.git
+[submodule "src/external/a3g4250d-pid"]
+	path = src/external/a3g4250d-pid
+	url = git@github.com:STMicroelectronics/a3g4250d-pid.git
