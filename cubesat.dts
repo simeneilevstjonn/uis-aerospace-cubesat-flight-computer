@@ -1,0 +1,55 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+    compatible = "brcm,bcm2837";
+};
+
+&i2c_arm {
+    status = "okay";
+
+    #address-cells = <1>;
+    #size-cells = <0>;
+    
+    lis2dw12@19 {
+        status = "okay";
+        compatible = "st,lis2dw12";
+        reg = <0x19>;
+        st,drdy-int-pin = <1>;
+        interrupt-parent = <&gpio>;
+        interrupts = <12>, <21>;
+    };
+
+    lps22hb@5d {
+        status = "okay";
+        compatible = "st,lps22hb";
+        reg = <0x5d>;
+        interrupt-parent = <&gpio>;
+        interrupts = <19>;
+    };
+
+    adt7410@48 {
+        status = "okay";
+        compatible = "adi,adt7410";
+        reg = <0x48>;
+        interrupt-parent = <&gpio>;
+        interrupts = <13>;
+    };
+
+    cc2d23s@28 {
+        status = "okay";
+        compatible = "amphenol,cc2d23s", "amphenol,cc2d23";
+        reg = <0x28>;
+        interrupt-parent = <&gpio>;
+        interrupts = <20>, <6>;
+        interrupt-names = "ready";
+    };
+
+    a3g4250d@68 {
+        status = "okay";
+        compatible = "st,a3g4250d";
+        reg = <0x68>;
+        interrupt-parent = <&gpio>;
+        interrupts = <16>;
+    };
+};
