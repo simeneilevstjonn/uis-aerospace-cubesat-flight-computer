@@ -40,7 +40,7 @@ int Gyroscope::fifo_read()
         /* Read how many samples in fifo */
         a3g4250d_fifo_data_level_get(&m_dev_ctx, &num);
 
-        while (num-- > 0)
+        for (int i = 0; i < num; i++)
         {
             /* Read angular rate data */
             int16_t data_raw_angular_rate[3];

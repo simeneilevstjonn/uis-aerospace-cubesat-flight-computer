@@ -12,8 +12,10 @@ int main()
 
     while (true)
     {
-        gyro.fifo_read();
-        acc.fifo_read();
+        int gyro_read = gyro.fifo_read();
+        int acc_read = acc.fifo_read();
+
+        std::cout << "Read " << gyro_read << " samples from gyro FIFO, " << acc_read << " from acc_fifo\n";
 
         auto& gyro_fifo = gyro.get_fifo();
         while (!gyro_fifo.empty())
@@ -31,6 +33,6 @@ int main()
             std::cout << "Acceleration sample " << sample.x << " " << sample.y << " " << sample.z << "\n";
         }
 
-        // platform_delay(10);
+        platform_delay(50);
     }
 }
