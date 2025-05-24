@@ -23,12 +23,12 @@ int main()
             std::cout << "Gyro sample " << sample.x << " " << sample.y << " " << sample.z << std::endl;
         }
 
-        auto& acc_fifo = gyro.get_fifo();
-        while (!gyro_fifo.empty())
+        auto& acc_fifo = acc.get_fifo();
+        while (!acc_fifo.empty())
         {
-            auto sample = gyro_fifo.front();
-            gyro_fifo.pop();
-            std::cout << "Gyro sample " << sample.x << " " << sample.y << " " << sample.z << std::endl;
+            auto sample = acc_fifo.front();
+            acc_fifo.pop();
+            std::cout << "Acceleration sample " << sample.x << " " << sample.y << " " << sample.z << std::endl;
         }
 
         platform_delay(50);
