@@ -31,6 +31,6 @@ int main()
             std::cout << "Gyro sample " << sample.x << " " << sample.y << " " << sample.z << std::endl;
         }
 
-        platform_delay(100);
+        platform_delay(50);
     }
 }
