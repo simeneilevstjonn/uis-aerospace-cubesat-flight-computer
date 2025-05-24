@@ -45,8 +45,7 @@ int32_t platform_write(void* handle, uint8_t reg, const uint8_t* bufp, uint16_t 
         return err;
     }
 
-    // uint8_t data[] = new uint8_t[len + sizeof(reg)];
-    uint8_t* data = (uint8_t*)malloc(len + sizeof(reg));
+    uint8_t* data = new uint8_t[len + sizeof(reg)];
     if (data == nullptr)
     {
         return -1;
@@ -57,13 +56,11 @@ int32_t platform_write(void* handle, uint8_t reg, const uint8_t* bufp, uint16_t 
 
     if (auto res = write(m_adapter_file, data, len + sizeof(reg)); res != len + sizeof(reg))
     {
-        // delete data;
-        free(data);
+        delete[] data;
         return res;
     }
 
-    // delete data;
-    free(data);
+    delete[] data;
     return 0;
 }
 
