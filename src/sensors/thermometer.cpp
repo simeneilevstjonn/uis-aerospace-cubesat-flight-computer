@@ -2,7 +2,7 @@
 
 Thermometer::Thermometer()
 {
-    m_stream.open("/sys/bus/i2c/devices/1-0048/hwmon/hwmon1/temp1_input", std::fstream::in);
+    m_stream.open(THERMO_PATH, std::fstream::in);
 }
 
 TemperatureSample Thermometer::current()
