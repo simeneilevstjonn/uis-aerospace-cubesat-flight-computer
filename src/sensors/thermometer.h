@@ -10,10 +10,8 @@ class Thermometer
   public:
     Thermometer();
 
-    int fifo_read();
-    std::queue<TemperatureSample>& get_fifo();
+    TemperatureSample current();
 
   private:
-    std::queue<TemperatureSample> m_fifo = std::queue<TemperatureSample>();
     std::ifstream m_stream;
 };

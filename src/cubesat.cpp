@@ -16,7 +16,6 @@ int main()
     {
         // int gyro_read = gyro.fifo_read();
         // int acc_read = acc.fifo_read();
-        int thermo_read = thermo.fifo_read();
 
         // std::cout << "Read " << gyro_read << " samples from gyro FIFO, " << acc_read << " from acc_fifo\n";
 
@@ -36,8 +35,8 @@ int main()
         //     std::cout << "Acceleration sample " << sample.x << " " << sample.y << " " << sample.z << "\n";
         // }
 
-        std::cout << "Read " << thermo_read << " thermo samples\n";
+        std::cout << "Current temperature is " << thermo.current() << "\n";
 
-        platform_delay(1);
+        platform_delay(500);
     }
 }
