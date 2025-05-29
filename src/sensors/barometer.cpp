@@ -30,6 +30,7 @@ Barometer::Barometer()
 
     lps22hb_fifo_watermark_set(&m_dev_ctx, 10);
     lps22hb_fifo_mode_set(&m_dev_ctx, LPS22HB_STREAM_MODE);
+    lps22hb_fifo_set(&m_dev_ctx, PROPERTY_ENABLE);
 }
 
 std::queue<BarometerSample>& Barometer::get_fifo()
