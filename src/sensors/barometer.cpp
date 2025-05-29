@@ -55,7 +55,7 @@ int Barometer::fifo_read()
             lps22hb_pressure_raw_get(&m_dev_ctx, &pressure);
 
             // Might need to read temperature to clear data from FIFO
-            uint16_t temp;
+            int16_t temp;
             lps22hb_temperature_raw_get(&m_dev_ctx, &temp);
 
             float sample = lps22hb_from_lsb_to_hpa(pressure);
