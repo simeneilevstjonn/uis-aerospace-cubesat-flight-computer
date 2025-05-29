@@ -18,33 +18,45 @@ Gyroscope::Gyroscope()
         throw -1;
     }
 
-    // /* Set FIFO watermark to 10 samples */
-    // a3g4250d_fifo_watermark_set(&m_dev_ctx, 10);
-    // /* Set FIFO mode to FIFO MODE */
-    // a3g4250d_fifo_mode_set(&m_dev_ctx, A3G4250D_FIFO_STREAM_MODE);
-    // /* Enable FIFO */
-    // a3g4250d_fifo_enable_set(&m_dev_ctx, PROPERTY_ENABLE);
+    /* Set FIFO watermark to 10 samples */
+    a3g4250d_fifo_watermark_set(&m_dev_ctx, 10);
+    /* Set FIFO mode to FIFO MODE */
+    a3g4250d_fifo_mode_set(&m_dev_ctx, A3G4250D_FIFO_STREAM_MODE);
+    /* Enable FIFO */
+    a3g4250d_fifo_enable_set(&m_dev_ctx, PROPERTY_ENABLE);
     /* Set Output Data Rate */
     a3g4250d_data_rate_set(&m_dev_ctx, A3G4250D_ODR_100Hz);
 }
 
 int Gyroscope::fifo_read()
 {
-    /* Read angular rate data */
-    int16_t data_raw_angular_rate[3];
-    memset(data_raw_angular_rate, 0x00, 3 * sizeof(int16_t));
-    if (!a3g4250d_angular_rate_raw_get(&m_dev_ctx, data_raw_angular_rate))
-    {
-        GyroscopeSample sample;
-        sample.x = a3g4250d_from_fs245dps_to_mdps(data_raw_angular_rate[0]);
-        sample.y = a3g4250d_from_fs245dps_to_mdps(data_raw_angular_rate[1]);
-        sample.z = a3g4250d_from_fs245dps_to_mdps(data_raw_angular_rate[2]);
+    uint8_t flags;
+    uint8_t num = 0;
+    /* Read watermark interrupt flag */
+    a3g4250d_fifo_wtm_flag_get(&m_dev_ctx, &flags);
 
-        m_fifo.push(sample);
-        return 1;
+    if (flags)
+    {
+        /* Read how many samples in fifo */
+        a3g4250d_fifo_data_level_get(&m_dev_ctx, &num);
+
+        for (int i = 0; i < num; i++)
+        {
+            /* Read angular rate data */
+            int16_t data_raw_angular_rate[3];
+            memset(data_raw_angular_rate, 0x00, 3 * sizeof(int16_t));
+            a3g4250d_angular_rate_raw_get(&m_dev_ctx, data_raw_angular_rate);
+
+            GyroscopeSample sample;
+            sample.x = a3g4250d_from_fs245dps_to_mdps(data_raw_angular_rate[0]);
+            sample.y = a3g4250d_from_fs245dps_to_mdps(data_raw_angular_rate[1]);
+            sample.z = a3g4250d_from_fs245dps_to_mdps(data_raw_angular_rate[2]);
+
+            m_fifo.push(sample);
+        }
     }
 
-    return 0;
+    return num;
 }
 
 std::queue<GyroscopeSample>& Gyroscope::get_fifo()
