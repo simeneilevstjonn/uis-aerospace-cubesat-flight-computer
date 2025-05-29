@@ -33,7 +33,7 @@ int Gyroscope::fifo_read()
     /* Read angular rate data */
     int16_t data_raw_angular_rate[3];
     memset(data_raw_angular_rate, 0x00, 3 * sizeof(int16_t));
-    if (a3g4250d_angular_rate_raw_get(&m_dev_ctx, data_raw_angular_rate))
+    if (!a3g4250d_angular_rate_raw_get(&m_dev_ctx, data_raw_angular_rate))
     {
         GyroscopeSample sample;
         sample.x = a3g4250d_from_fs245dps_to_mdps(data_raw_angular_rate[0]);
