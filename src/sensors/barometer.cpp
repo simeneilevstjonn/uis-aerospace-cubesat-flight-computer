@@ -42,17 +42,26 @@ int Barometer::fifo_read()
 {
     uint8_t val, i;
     /* Read output only if new value is available */
-    lps22hb_fifo_data_level_get(&m_dev_ctx, &val);
+    lps22hb_fifo_fth_flag_get(&m_dev_ctx, &val);
 
-    for (i = 0; i < val; i++)
+    if (val)
     {
-        /* Read pressure */
-        uint32_t pressure = 0;
-        lps22hb_pressure_raw_get(&m_dev_ctx, &pressure);
+        lps22hb_fifo_data_level_get(&m_dev_ctx, &val);
 
-        float sample = lps22hb_from_lsb_to_hpa(pressure);
+        for (i = 0; i < val; i++)
+        {
+            /* Read pressure */
+            uint32_t pressure = 0;
+            lps22hb_pressure_raw_get(&m_dev_ctx, &pressure);
 
-        m_fifo.push(sample);
+            // Might need to read temperature to clear data from FIFO
+            uint16_t temp;
+            lps22hb_temperature_raw_get(&m_dev_ctx, &temp);
+
+            float sample = lps22hb_from_lsb_to_hpa(pressure);
+
+            m_fifo.push(sample);
+        }
     }
 
     return val;
