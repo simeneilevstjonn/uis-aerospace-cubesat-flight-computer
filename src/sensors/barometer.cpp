@@ -28,8 +28,8 @@ Barometer::Barometer()
 
     lps22hb_data_rate_set(&m_dev_ctx, LPS22HB_ODR_10_Hz);
 
-    // lps22hb_fifo_watermark_set(&m_dev_ctx, 10);
-    // lps22hb_fifo_mode_set(&m_dev_ctx, LPS22HB_STREAM_MODE);
+    lps22hb_fifo_watermark_set(&m_dev_ctx, 10);
+    lps22hb_fifo_mode_set(&m_dev_ctx, LPS22HB_STREAM_MODE);
 }
 
 std::queue<BarometerSample>& Barometer::get_fifo()
@@ -39,35 +39,20 @@ std::queue<BarometerSample>& Barometer::get_fifo()
 
 int Barometer::fifo_read()
 {
-    // uint8_t val, i;
-    // /* Read output only if new value is available */
-    // lps22hb_fifo_fth_flag_get(&m_dev_ctx, &val);
+    uint8_t val, i;
+    /* Read output only if new value is available */
+    lps22hb_fifo_data_level_get(&m_dev_ctx, &val);
 
-    // if (val)
-    // {
-    //     lps22hb_fifo_data_level_get(&m_dev_ctx, &val);
-
-    //     for (i = 0; i < val; i++)
-    //     {
-    //         /* Read pressure */
-    //         uint32_t pressure = 0;
-    //         lps22hb_pressure_raw_get(&m_dev_ctx, &pressure);
-
-    //         float sample = lps22hb_from_lsb_to_hpa(pressure);
-
-    //         m_fifo.push(sample);
-    //     }
-    // }
-
-    uint32_t pressure = 0;
-    if (!lps22hb_pressure_raw_get(&m_dev_ctx, &pressure))
+    for (i = 0; i < val; i++)
     {
+        /* Read pressure */
+        uint32_t pressure = 0;
+        lps22hb_pressure_raw_get(&m_dev_ctx, &pressure);
+
         float sample = lps22hb_from_lsb_to_hpa(pressure);
 
         m_fifo.push(sample);
-        return 1;
     }
 
-    return 0;
-    // return val;
+    return val;
 }
