@@ -8,9 +8,13 @@ project (${APP_NAME})
 
 add_executable(CubeSat)
 
+target_compile_options(CubeSat PRIVATE -pthread)
+target_link_options(CubeSat PRIVATE -pthread)
+
 target_include_directories(CubeSat PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/sensors
+    ${CMAKE_CURRENT_SOURCE_DIR}/logging
     ${CMAKE_CURRENT_SOURCE_DIR}/external/a3g4250d-pid
     ${CMAKE_CURRENT_SOURCE_DIR}/external/lis2dw12-pid
     ${CMAKE_CURRENT_SOURCE_DIR}/external/lps22hb-pid
@@ -25,3 +29,4 @@ target_sources(CubeSat PRIVATE
 )
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/sensors)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/logging)
