@@ -16,6 +16,8 @@ GNSS::GNSS()
     cfsetispeed(&params, B9600);
     cfsetospeed(&params, B9600);
     cfmakeraw(&params);
+    params.c_cflag |= CLOCAL;
+    params.c_cflag |= CREAD;
 
     if (int res = tcsetattr(m_file, TCSANOW, &params); res)
     {
