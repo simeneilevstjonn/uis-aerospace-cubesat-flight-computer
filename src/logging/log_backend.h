@@ -5,6 +5,7 @@
 #include <fstream>
 #include <thread>
 #include <mutex>
+#include <condition_variable>
 
 class LogBackend
 {
@@ -28,6 +29,8 @@ class LogBackend
 
     std::queue<LogEntry> m_queue = std::queue<LogEntry>();
     std::mutex m_queue_mutex;
+    std::condition_variable m_data_ready_cv;
+    bool m_data_ready = false;
 
     friend void static_thread_entry(LogBackend* backend);
 };

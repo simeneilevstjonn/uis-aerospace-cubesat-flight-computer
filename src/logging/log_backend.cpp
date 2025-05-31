@@ -36,6 +36,9 @@ void LogBackend::push_entry(LogEntry entry)
 {
     std::lock_guard<std::mutex> lk(m_queue_mutex);
     m_queue.push(entry);
+
+    m_data_ready = true;
+    m_data_ready_cv.notify_all();
 }
 
 void LogBackend::enable()
@@ -48,6 +51,12 @@ void LogBackend::thread_entry()
     while (true)
     {
         // Await wakeup.
+        std::mutex mtx;
+        std::unique_lock<std::mutex> lck(mtx);
+        while (!m_data_ready)
+        {
+            m_data_ready_cv.wait(lck);
+        }
 
         bool file_needs_flush = false;
         bool stdout_needs_flush = false;
