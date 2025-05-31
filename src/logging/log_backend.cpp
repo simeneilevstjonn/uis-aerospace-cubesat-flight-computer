@@ -6,6 +6,10 @@ void static_thread_entry(LogBackend* backend)
     backend->thread_entry();
 }
 
+LogBackend::LogBackend()
+{
+}
+
 void LogBackend::register_stdout(LogLevel level)
 {
     m_stdout_level = level;
@@ -32,7 +36,7 @@ void LogBackend::register_file(const char* directory, const char* basename, LogL
     m_file_level = level;
 }
 
-void LogBackend::push_entry(LogEntry entry)
+void LogBackend::push_entry(LogEntry& entry)
 {
     std::lock_guard<std::mutex> lk(m_queue_mutex);
     m_queue.push(entry);
@@ -78,8 +82,8 @@ void LogBackend::thread_entry()
             std::array<char, 4096> encoded;
             tm datetime = *localtime(&element.time);
 
-            snprintf(encoded.data(), encoded.size(), "[%s] %04d-%02d-%02d %02d:%02d:%02d [%s]: %s", log_level_to_string(element.level).c_str(), datetime.tm_year + 1900,
-                     datetime.tm_mon + 1, datetime.tm_mday, datetime.tm_hour, datetime.tm_min, datetime.tm_sec, element.tag, element.content);
+            snprintf(encoded.data(), encoded.size(), "[%s] %04d-%02d-%02d %02d:%02d:%02d [%s]: %s\n", log_level_to_string(element.level).c_str(), datetime.tm_year + 1900,
+                     datetime.tm_mon + 1, datetime.tm_mday, datetime.tm_hour, datetime.tm_min, datetime.tm_sec, element.tag.c_str(), element.content.c_str());
 
             encoded[encoded.size() - 1] = 0;
 

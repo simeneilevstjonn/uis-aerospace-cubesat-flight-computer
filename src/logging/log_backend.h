@@ -10,10 +10,11 @@
 class LogBackend
 {
   public:
+    LogBackend();
     void register_stdout(LogLevel level);
     void register_file(const char* directory, const char* basename, LogLevel level);
 
-    void push_entry(LogEntry entry);
+    void push_entry(LogEntry& entry);
 
     void enable();
 
