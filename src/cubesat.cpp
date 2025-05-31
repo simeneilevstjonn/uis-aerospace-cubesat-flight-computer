@@ -3,6 +3,7 @@
 #include "thermometer.h"
 #include "barometer.h"
 #include "i2c.h"
+#include "gnss.h"
 #include <iostream>
 
 int main()
@@ -13,12 +14,14 @@ int main()
     auto acc = Accelerometer();
     auto thermo = Thermometer();
     auto baro = Barometer();
+    auto gnss = GNSS();
 
     while (true)
     {
         // int gyro_read = gyro.fifo_read();
         // int acc_read = acc.fifo_read();
-        int baro_read = baro.fifo_read();
+        // int baro_read = baro.fifo_read();
+        gnss.tick();
 
         // std::cout << "Read " << gyro_read << " samples from gyro FIFO, " << acc_read << " from acc_fifo\n";
 
@@ -40,14 +43,22 @@ int main()
 
         // std::cout << "Current temperature is " << thermo.current() << "\n";
 
-        std::cout << "Read " << baro_read << " barometer samples:\n";
+        // std::cout << "Read " << baro_read << " barometer samples:\n";
 
-        auto& baro_fifo = baro.get_fifo();
-        while (!baro_fifo.empty())
+        // auto& baro_fifo = baro.get_fifo();
+        // while (!baro_fifo.empty())
+        // {
+        //     auto sample = baro_fifo.front();
+        //     baro_fifo.pop();
+        //     std::cout << "Read barometer sample " << sample << " hPa \n";
+        // }
+
+        auto& gnss_fifo = gnss.get_fifo();
+        while (!gnss_fifo.empty())
         {
-            auto sample = baro_fifo.front();
-            baro_fifo.pop();
-            std::cout << "Read barometer sample " << sample << " hPa \n";
+            auto packet = gnss_fifo.front();
+            gnss_fifo.pop();
+            std::cout << packet << "\n";
         }
 
         platform_delay(100);
