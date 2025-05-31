@@ -15,6 +15,7 @@ GNSS::GNSS()
     struct termios params = { 0 };
     cfsetispeed(&params, B9600);
     cfsetospeed(&params, B9600);
+    cfmakeraw(&params);
 
     if (int res = tcsetattr(m_file, TCSANOW, &params); res)
     {
