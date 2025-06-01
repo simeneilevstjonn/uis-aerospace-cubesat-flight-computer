@@ -8,6 +8,9 @@ project (${APP_NAME})
 
 add_executable(CubeSat)
 
+set (CMAKE_CXX_FLAGS "-lstdc++fs -std=c++20")
+
+
 target_compile_options(CubeSat PRIVATE -pthread)
 target_link_options(CubeSat PRIVATE -pthread)
 
@@ -22,6 +25,7 @@ target_include_directories(CubeSat PRIVATE
 
 target_sources(CubeSat PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/cubesat.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/datalogger.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/i2c-linux.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/external/a3g4250d-pid/a3g4250d_reg.c
     ${CMAKE_CURRENT_SOURCE_DIR}/external/lis2dw12-pid/lis2dw12_reg.c

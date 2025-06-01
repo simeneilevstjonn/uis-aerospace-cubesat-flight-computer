@@ -70,9 +70,9 @@ int Accelerometer::fifo_read()
 
             AccelerometerSample sample;
 
-            sample.x = lis2dw12_from_fs2_to_mg(data_raw_acceleration[0]);
-            sample.y = lis2dw12_from_fs2_to_mg(data_raw_acceleration[1]);
-            sample.z = lis2dw12_from_fs2_to_mg(data_raw_acceleration[2]);
+            sample.x = data_raw_acceleration[0];
+            sample.y = data_raw_acceleration[1];
+            sample.z = data_raw_acceleration[2];
 
             m_fifo.push(sample);
         }

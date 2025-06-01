@@ -24,6 +24,7 @@ void LogBackend::register_file(const char* directory, const char* basename, LogL
     tm datetime = *localtime(&timestamp);
 
     std::array<char, 1024> full_path;
+    full_path[full_path.size() - 1] = 0;
     snprintf(full_path.data(), full_path.size(), "%s/%s-%04d-%02d-%02dT%02d:%02d:%02d", directory, basename, datetime.tm_year + 1900, datetime.tm_mon + 1, datetime.tm_mday,
              datetime.tm_hour, datetime.tm_min, datetime.tm_sec);
 

@@ -4,7 +4,13 @@
 #include "lps22hb_reg.h"
 #include "logger.h"
 
-using BarometerSample = float;
+#pragma pack(1)
+struct BarometerSample
+{
+    uint32_t pressure;
+    int16_t temperature;
+};
+#pragma pack()
 
 class Barometer
 {
