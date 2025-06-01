@@ -123,6 +123,8 @@ std::string LogBackend::log_level_to_string(LogLevel level)
         return "INFO";
     case LogLevel::Warn:
         return "WARN";
+    case LogLevel::Error:
+        return "ERROR";
     case LogLevel::Critical:
         return "CRITICAL";
     default:
