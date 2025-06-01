@@ -2,8 +2,10 @@
 #include "i2c.h"
 #include <cstring>
 
-Accelerometer::Accelerometer()
+Accelerometer::Accelerometer(Logger* logger)
 {
+    m_logger = logger;
+
     m_dev_ctx.write_reg = platform_write;
     m_dev_ctx.read_reg = platform_read;
     m_dev_ctx.mdelay = platform_delay;
@@ -13,9 +15,11 @@ Accelerometer::Accelerometer()
     uint8_t whoamI;
     /* Check device ID */
     lis2dw12_device_id_get(&m_dev_ctx, &whoamI);
+    m_logger->debug("LIS2DW12 is %02X", whoamI);
 
     if (whoamI != LIS2DW12_ID)
     {
+        m_logger->error("LIS2DW who am I reported incorrect value!");
         throw -1;
     }
 

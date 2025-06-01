@@ -2,6 +2,7 @@
 #include <queue>
 #include <cstdint>
 #include "lis2dw12_reg.h"
+#include "logger.h"
 
 struct AccelerometerSample
 {
@@ -13,7 +14,7 @@ struct AccelerometerSample
 class Accelerometer
 {
   public:
-    Accelerometer();
+    Accelerometer(Logger* logger);
     int fifo_read();
     std::queue<AccelerometerSample>& get_fifo();
 
@@ -22,4 +23,6 @@ class Accelerometer
 
     std::queue<AccelerometerSample> m_fifo = std::queue<AccelerometerSample>();
     stmdev_ctx_t m_dev_ctx;
+
+    Logger* m_logger;
 };

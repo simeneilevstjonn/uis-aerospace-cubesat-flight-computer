@@ -1,7 +1,9 @@
 #include "thermometer.h"
 
-Thermometer::Thermometer()
+Thermometer::Thermometer(Logger* logger)
 {
+    m_logger = logger;
+
     m_stream.open(THERMO_PATH, std::fstream::in);
 }
 

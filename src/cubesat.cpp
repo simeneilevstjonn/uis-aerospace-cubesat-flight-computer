@@ -1,5 +1,4 @@
 #include "accelerometer.h"
-#include "gyroscope.h"
 #include "thermometer.h"
 #include "barometer.h"
 #include "i2c.h"
@@ -10,13 +9,7 @@
 
 int main()
 {
-    // i2c_init();
-
-    // auto gyro = Gyroscope();
-    // auto acc = Accelerometer();
-    // auto thermo = Thermometer();
-    // auto baro = Barometer();
-    // auto gnss = GNSS();
+    i2c_init();
 
     LogBackend log_backend;
     log_backend.register_stdout(LogLevel::Debug);
@@ -25,50 +18,54 @@ int main()
     Logger main_logger = Logger("main", &log_backend);
     main_logger.info("CubeSat application starting");
 
+    auto acc_logger = Logger("Accelerometer", &log_backend);
+    auto thermo_logger = Logger("Thermometer", &log_backend);
+    auto baro_logger = Logger("Barometer", &log_backend);
+    auto gnss_logger = Logger("GNSS", &log_backend);
+
+    auto acc = Accelerometer(&acc_logger);
+    auto thermo = Thermometer(&thermo_logger);
+    auto baro = Barometer(&baro_logger);
+    auto gnss = GNSS(&gnss_logger);
+
     while (true)
     {
-        // int gyro_read = gyro.fifo_read();
-        // int acc_read = acc.fifo_read();
-        // int baro_read = baro.fifo_read();
-        // gnss.tick();
+        int acc_read = acc.fifo_read();
+        int baro_read = baro.fifo_read();
+        gnss.tick();
 
-        // std::cout << "Read " << gyro_read << " samples from gyro FIFO, " << acc_read << " from acc_fifo\n";
+        if (acc_read || baro_read)
+        {
+            main_logger.debug("Read %d samples for acceleration FIFO. %d samples from barometer FIFO.", acc_read, baro_read);
+        }
 
-        // auto& gyro_fifo = gyro.get_fifo();
-        // while (!gyro_fifo.empty())
-        // {
-        //     auto sample = gyro_fifo.front();
-        //     gyro_fifo.pop();
-        //     std::cout << "Gyro sample " << sample.x << " " << sample.y << " " << sample.z << "\n";
-        // }
+        auto& acc_fifo = acc.get_fifo();
+        while (!acc_fifo.empty())
+        {
+            auto sample = acc_fifo.front();
+            acc_fifo.pop();
+        }
 
-        // auto& acc_fifo = acc.get_fifo();
-        // while (!acc_fifo.empty())
-        // {
-        //     auto sample = acc_fifo.front();
-        //     acc_fifo.pop();
-        //     std::cout << "Acceleration sample " << sample.x << " " << sample.y << " " << sample.z << "\n";
-        // }
+        auto& baro_fifo = baro.get_fifo();
+        while (!baro_fifo.empty())
+        {
+            auto sample = baro_fifo.front();
+            baro_fifo.pop();
+        }
 
-        // std::cout << "Current temperature is " << thermo.current() << "\n";
+        auto& gnss_fifo = gnss.get_fifo();
+        int gnss_count = 0;
+        while (!gnss_fifo.empty())
+        {
+            auto packet = gnss_fifo.front();
+            gnss_fifo.pop();
+            gnss_count++;
+        }
 
-        // std::cout << "Read " << baro_read << " barometer samples:\n";
-
-        // auto& baro_fifo = baro.get_fifo();
-        // while (!baro_fifo.empty())
-        // {
-        //     auto sample = baro_fifo.front();
-        //     baro_fifo.pop();
-        //     std::cout << "Read barometer sample " << sample << " hPa \n";
-        // }
-
-        // auto& gnss_fifo = gnss.get_fifo();
-        // while (!gnss_fifo.empty())
-        // {
-        //     auto packet = gnss_fifo.front();
-        //     gnss_fifo.pop();
-        //     std::cout << packet << "\n";
-        // }
+        if (gnss_count)
+        {
+            main_logger.debug("Read %d frames from GNSS.", gnss_count);
+        }
 
         platform_delay(100);
     }

@@ -1,8 +1,10 @@
 #include "barometer.h"
 #include "i2c.h"
 
-Barometer::Barometer()
+Barometer::Barometer(Logger* logger)
 {
+    m_logger = logger;
+
     /* Initialize mems driver interface */
     m_dev_ctx.write_reg = platform_write;
     m_dev_ctx.read_reg = platform_read;
@@ -12,8 +14,11 @@ Barometer::Barometer()
     /* Check device ID */
     uint8_t id;
     lps22hb_device_id_get(&m_dev_ctx, &id);
+    m_logger->debug("LPS22HB is %02X", id);
+
     if (id != LPS22HB_ID)
     {
+        m_logger->error("LPS22HB who am I reported an incorrect value!");
         throw -1;
     }
 

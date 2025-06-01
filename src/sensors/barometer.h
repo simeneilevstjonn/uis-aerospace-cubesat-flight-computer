@@ -2,13 +2,14 @@
 #include <queue>
 #include <cstdint>
 #include "lps22hb_reg.h"
+#include "logger.h"
 
 using BarometerSample = float;
 
 class Barometer
 {
   public:
-    Barometer();
+    Barometer(Logger* logger);
     int fifo_read();
     std::queue<BarometerSample>& get_fifo();
 
@@ -17,4 +18,6 @@ class Barometer
 
     std::queue<BarometerSample> m_fifo = std::queue<BarometerSample>();
     stmdev_ctx_t m_dev_ctx;
+
+    Logger* m_logger;
 };

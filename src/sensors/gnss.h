@@ -4,11 +4,12 @@
 #include <cstddef>
 #include <queue>
 #include <string>
+#include "logger.h"
 
 class GNSS
 {
   public:
-    GNSS();
+    GNSS(Logger* logger);
 
     void tick();
 
@@ -18,6 +19,7 @@ class GNSS
     int m_file;
     std::array<uint8_t, 200> m_packet;
     size_t m_packet_index = 0;
+    Logger* m_logger;
 
     std::queue<std::string> m_fifo;
 

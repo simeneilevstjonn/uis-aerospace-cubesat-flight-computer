@@ -3,14 +3,18 @@
 #include <unistd.h>
 #include <termios.h>
 
-GNSS::GNSS()
+GNSS::GNSS(Logger* logger)
 {
+    m_logger = logger;
+
     m_file = open("/dev/ttyS0", O_RDONLY);
 
     if (m_file < 0)
     {
+        m_logger->error("Failed to open GNSS file: %d", m_file);
         throw m_file;
     }
+    m_logger->debug("Opened GNSS file");
 
     struct termios params = { 0 };
     cfsetispeed(&params, B9600);
@@ -21,6 +25,7 @@ GNSS::GNSS()
 
     if (int res = tcsetattr(m_file, TCSANOW, &params); res)
     {
+        m_logger->error("Failed to set serial port parameters: %d", res);
         throw res;
     }
 }
@@ -34,7 +39,7 @@ void GNSS::tick()
 
         if (res < 0)
         {
-            // LOG ERROR!
+            m_logger->error("Failed to read serial port: %d", res);
             break;
         }
 
@@ -67,7 +72,7 @@ void GNSS::decode_bytes(const uint8_t* data, size_t len)
             }
         }
         // Packets are end with newlines
-        else if (c == '\n')
+        else if (c == '\n' || c == '\r')
         {
             if (m_packet_index)
             {
@@ -79,7 +84,7 @@ void GNSS::decode_bytes(const uint8_t* data, size_t len)
         }
         else if (m_packet_index == m_packet.size() - 1)
         {
-            // LOG ERROR!!!
+            m_logger->error("Package too long! Possibly missed packet delimiters.");
             m_packet_index = 0;
         }
         else
