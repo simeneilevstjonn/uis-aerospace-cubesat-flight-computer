@@ -1,5 +1,6 @@
 #include "log_backend.h"
 #include <ctime>
+#include <array>
 
 void static_thread_entry(LogBackend* backend)
 {
