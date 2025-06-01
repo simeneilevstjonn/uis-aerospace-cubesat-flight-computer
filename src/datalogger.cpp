@@ -84,114 +84,117 @@ void DataLogger::queue_gnss_sample(std::string& sample)
 
 void DataLogger::thread_entry()
 {
-    bool flush = false;
-    while (!m_accelerometer_queue.empty())
+    while (true)
     {
-        auto sample = m_accelerometer_queue.front();
+        bool flush = false;
+        while (!m_accelerometer_queue.empty())
         {
-            std::lock_guard<std::mutex> lk(m_accelerometer_mutex);
-            m_accelerometer_queue.pop();
+            auto sample = m_accelerometer_queue.front();
+            {
+                std::lock_guard<std::mutex> lk(m_accelerometer_mutex);
+                m_accelerometer_queue.pop();
+            }
+
+            if (m_accelerometer_file != nullptr)
+            {
+                ssize_t res = fwrite(&sample, sizeof(sample), 1, m_accelerometer_file);
+
+                if (res < 0)
+                {
+                    m_logger->error("Failed to write accelerometer sample to file: %d", res);
+                }
+                else if (res < sizeof(sample))
+                {
+                    m_logger->error("Failed to write entire accelerometer sample to file. Wrote %d", res);
+                }
+                else
+                {
+                    flush = true;
+                }
+            }
         }
 
-        if (m_accelerometer_file != nullptr)
+        if (flush)
         {
-            ssize_t res = fwrite(&sample, sizeof(sample), 1, m_accelerometer_file);
-
-            if (res < 0)
-            {
-                m_logger->error("Failed to write accelerometer sample to file: %d", res);
-            }
-            else if (res < sizeof(sample))
-            {
-                m_logger->error("Failed to write entire accelerometer sample to file. Wrote %d", res);
-            }
-            else
-            {
-                flush = true;
-            }
-        }
-    }
-
-    if (flush)
-    {
-        fflush(m_accelerometer_file);
-    }
-
-    flush = false;
-    while (!m_barometer_queue.empty())
-    {
-        auto sample = m_barometer_queue.front();
-        {
-            std::lock_guard<std::mutex> lk(m_barometer_mutex);
-            m_barometer_queue.pop();
+            fflush(m_accelerometer_file);
         }
 
-        if (m_barometer_file != nullptr)
+        flush = false;
+        while (!m_barometer_queue.empty())
         {
-            ssize_t res = fwrite(&sample, sizeof(sample), 1, m_barometer_file);
+            auto sample = m_barometer_queue.front();
+            {
+                std::lock_guard<std::mutex> lk(m_barometer_mutex);
+                m_barometer_queue.pop();
+            }
 
-            if (res < 0)
+            if (m_barometer_file != nullptr)
             {
-                m_logger->error("Failed to write barometer sample to file: %d", res);
-            }
-            else if (res < sizeof(sample))
-            {
-                m_logger->error("Failed to write entire barometer sample to file. Wrote %d", res);
-            }
-            else
-            {
-                flush = true;
+                ssize_t res = fwrite(&sample, sizeof(sample), 1, m_barometer_file);
+
+                if (res < 0)
+                {
+                    m_logger->error("Failed to write barometer sample to file: %d", res);
+                }
+                else if (res < sizeof(sample))
+                {
+                    m_logger->error("Failed to write entire barometer sample to file. Wrote %d", res);
+                }
+                else
+                {
+                    flush = true;
+                }
             }
         }
-    }
 
-    if (flush)
-    {
-        fflush(m_barometer_file);
-    }
-
-    flush = false;
-    while (!m_gnss_queue.empty())
-    {
-        auto sample = m_gnss_queue.front();
+        if (flush)
         {
-            std::lock_guard<std::mutex> lk(m_gnss_mutex);
-            m_gnss_queue.pop();
+            fflush(m_barometer_file);
         }
 
-        if (m_gnss_file != nullptr)
+        flush = false;
+        while (!m_gnss_queue.empty())
         {
-            ssize_t res = fwrite(sample.c_str(), sample.length(), 1, m_gnss_file);
-
-            if (res < 0)
+            auto sample = m_gnss_queue.front();
             {
-                m_logger->error("Failed to write gnss sample to file: %d", res);
-            }
-            else if (res < sizeof(sample))
-            {
-                m_logger->error("Failed to write entire gnss sample to file. Wrote %d", res);
-            }
-            else
-            {
-                flush = true;
+                std::lock_guard<std::mutex> lk(m_gnss_mutex);
+                m_gnss_queue.pop();
             }
 
-            char newline = '\n';
-            res = fwrite(&newline, sizeof(newline), 1, m_gnss_file);
-
-            if (res < sizeof(newline))
+            if (m_gnss_file != nullptr)
             {
-                m_logger->error("Failed to write newline to gnss file: %d", res);
+                ssize_t res = fwrite(sample.c_str(), sample.length(), 1, m_gnss_file);
+
+                if (res < 0)
+                {
+                    m_logger->error("Failed to write gnss sample to file: %d", res);
+                }
+                else if (res < sizeof(sample))
+                {
+                    m_logger->error("Failed to write entire gnss sample to file. Wrote %d", res);
+                }
+                else
+                {
+                    flush = true;
+                }
+
+                char newline = '\n';
+                res = fwrite(&newline, sizeof(newline), 1, m_gnss_file);
+
+                if (res < sizeof(newline))
+                {
+                    m_logger->error("Failed to write newline to gnss file: %d", res);
+                }
             }
         }
-    }
 
-    if (flush)
-    {
-        fflush(m_gnss_file);
-    }
+        if (flush)
+        {
+            fflush(m_gnss_file);
+        }
 
-    sleep(1);
+        sleep(1);
+    }
 }
 
 void DataLogger::static_thread_entry(DataLogger* dataLogger)
