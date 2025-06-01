@@ -21,6 +21,7 @@ target_include_directories(CubeSat PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/external/a3g4250d-pid
     ${CMAKE_CURRENT_SOURCE_DIR}/external/lis2dw12-pid
     ${CMAKE_CURRENT_SOURCE_DIR}/external/lps22hb-pid
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/RadioHead
 )
 
 target_sources(CubeSat PRIVATE
@@ -34,3 +35,4 @@ target_sources(CubeSat PRIVATE
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/sensors)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/logging)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/RadioHead)
