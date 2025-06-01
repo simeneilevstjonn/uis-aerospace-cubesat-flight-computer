@@ -99,13 +99,9 @@ void DataLogger::thread_entry()
             {
                 ssize_t res = fwrite(&sample, sizeof(sample), 1, m_accelerometer_file);
 
-                if (res < 0)
+                if (res < 1)
                 {
                     m_logger->error("Failed to write accelerometer sample to file: %d", res);
-                }
-                else if (res < sizeof(sample))
-                {
-                    m_logger->error("Failed to write entire accelerometer sample to file. Wrote %d", res);
                 }
                 else
                 {
@@ -132,13 +128,9 @@ void DataLogger::thread_entry()
             {
                 ssize_t res = fwrite(&sample, sizeof(sample), 1, m_barometer_file);
 
-                if (res < 0)
+                if (res < 1)
                 {
                     m_logger->error("Failed to write barometer sample to file: %d", res);
-                }
-                else if (res < sizeof(sample))
-                {
-                    m_logger->error("Failed to write entire barometer sample to file. Wrote %d", res);
                 }
                 else
                 {
@@ -165,13 +157,9 @@ void DataLogger::thread_entry()
             {
                 ssize_t res = fwrite(sample.c_str(), sample.length(), 1, m_gnss_file);
 
-                if (res < 0)
+                if (res < 1)
                 {
                     m_logger->error("Failed to write gnss sample to file: %d", res);
-                }
-                else if (res < sizeof(sample))
-                {
-                    m_logger->error("Failed to write entire gnss sample to file. Wrote %d", res);
                 }
                 else
                 {
@@ -181,7 +169,7 @@ void DataLogger::thread_entry()
                 char newline = '\n';
                 res = fwrite(&newline, sizeof(newline), 1, m_gnss_file);
 
-                if (res < sizeof(newline))
+                if (res < 1)
                 {
                     m_logger->error("Failed to write newline to gnss file: %d", res);
                 }
