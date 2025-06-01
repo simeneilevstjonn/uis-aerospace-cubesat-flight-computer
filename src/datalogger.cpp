@@ -3,6 +3,7 @@
 #include <ctime>
 #include <cstddef>
 #include <unistd.h>
+#include <array>
 
 DataLogger::DataLogger(Logger* logger, std::string base_directory)
 {
