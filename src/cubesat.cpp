@@ -6,6 +6,7 @@
 #include "logger.h"
 #include "log_backend.h"
 #include <iostream>
+#include "datalogger.h"
 
 int main()
 {
@@ -22,11 +23,14 @@ int main()
     auto thermo_logger = Logger("Thermometer", &log_backend);
     auto baro_logger = Logger("Barometer", &log_backend);
     auto gnss_logger = Logger("GNSS", &log_backend);
+    auto datalogger_logger = Logger("DataLogger", &log_backend);
 
     auto acc = Accelerometer(&acc_logger);
     auto thermo = Thermometer(&thermo_logger);
     auto baro = Barometer(&baro_logger);
     auto gnss = GNSS(&gnss_logger);
+
+    auto datalogger = DataLogger(&datalogger_logger, "/home/simen/cubesat_data");
 
     while (true)
     {
@@ -44,6 +48,8 @@ int main()
         {
             auto sample = acc_fifo.front();
             acc_fifo.pop();
+
+            datalogger.queue_acceleration_sample(sample);
         }
 
         auto& baro_fifo = baro.get_fifo();
@@ -51,6 +57,8 @@ int main()
         {
             auto sample = baro_fifo.front();
             baro_fifo.pop();
+
+            datalogger.queue_barometer_sample(sample);
         }
 
         auto& gnss_fifo = gnss.get_fifo();
@@ -60,6 +68,8 @@ int main()
             auto packet = gnss_fifo.front();
             gnss_fifo.pop();
             gnss_count++;
+
+            datalogger.queue_gnss_sample(packet);
         }
 
         if (gnss_count)
