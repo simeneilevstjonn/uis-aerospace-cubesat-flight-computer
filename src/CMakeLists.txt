@@ -28,6 +28,7 @@ target_sources(CubeSat PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/cubesat.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/datalogger.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/i2c-linux.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/linux-spi.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/external/a3g4250d-pid/a3g4250d_reg.c
     ${CMAKE_CURRENT_SOURCE_DIR}/external/lis2dw12-pid/lis2dw12_reg.c
     ${CMAKE_CURRENT_SOURCE_DIR}/external/lps22hb-pid/lps22hb_reg.c
