@@ -30,7 +30,7 @@ int main()
     auto baro = Barometer(&baro_logger);
     auto gnss = GNSS(&gnss_logger);
 
-    auto datalogger = DataLogger(&datalogger_logger, "/home/simen/cubesat_data");
+    auto datalogger = DataLogger(&datalogger_logger, "/home/cubesat/cubesat_data");
 
     while (true)
     {
