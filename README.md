@@ -10,7 +10,7 @@ git clone --recursive git@github.com:simeneilevstjonn/uis-aerospace-cubesat-flig
 ### Build C++ application
 Install toolchain:
 ```sh
-sudo apt-get install cmake ninja-build linux-headers-generic
+sudo apt-get install cmake ninja-build linux-headers-generic libi2c-dev
 ```
 
 First, create a build directory:
