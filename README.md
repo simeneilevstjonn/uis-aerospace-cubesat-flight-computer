@@ -10,7 +10,7 @@ git clone --recursive git@github.com:simeneilevstjonn/uis-aerospace-cubesat-flig
 ### Build C++ application
 Install toolchain:
 ```sh
-sudo apt-get install cmake ninja-build
+sudo apt-get install cmake ninja-build linux-headers-generic
 ```
 
 First, create a build directory:
@@ -25,6 +25,14 @@ cmake ../src -G Ninja
 Finally build:
 ```sh
 ninja
+```
+
+### Service
+```sh
+sudo cp cubesat.service /etc/systemd/system
+sudo systemctl enable cubesat
+sudo systemctl daemon-reload
+sudo systemctl start cubesat
 ```
 
 ### Device tree
