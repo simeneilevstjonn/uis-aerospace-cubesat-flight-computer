@@ -40,7 +40,7 @@ The device tree tells the kernel what sensors are attached. Unfortunately, the s
 
 Build the device tree using
 ```sh
-dtc -@ -I dts -O dto -o cubesat.dtbo cubesat.dts
+dtc -@ -I dts -O dtb -o cubesat.dtbo cubesat.dts
 ```
 
 Deploy using
